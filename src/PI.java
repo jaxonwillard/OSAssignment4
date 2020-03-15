@@ -4,61 +4,76 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.Semaphore;
 
 public class PI {
-    TaskQueue taskQueue = new TaskQueue();
-    ResultTable resultTable = new ResultTable();
+    volatile TaskQueue taskQueue;
+    volatile ResultTable resultTable = new ResultTable();
     int processors = Runtime.getRuntime().availableProcessors();
+    PI(int size){
+        this.taskQueue = new TaskQueue(size);
+    }
 
     public static void main(String[] args) {
-        try {
-            PI piCalculator = new PI();
-            ArrayList<Thread> threads = new ArrayList<>();
-            long startTime = System.currentTimeMillis();
-            for (int i = 0; i < piCalculator.processors; i++) {
-                threads.add(new Thread(new WorkerThread(piCalculator.taskQueue, piCalculator.resultTable)));
-                threads.get(i).start();
-                threads.get(i).join();
-            }
-            long totalTime = System.currentTimeMillis() - startTime;
+        for (int i=0; i<5; i++) {
+            try {
+                PI piCalculator = new PI(i * 200);
+                ArrayList<Thread> threads = new ArrayList<>();
+                long startTime = System.currentTimeMillis();
+                for (int j = 0;  j< piCalculator.processors; j++) {
+                    threads.add(new Thread(new WorkerThread(piCalculator.taskQueue, piCalculator.resultTable)));
+                    threads.get(j).start();
+                    threads.get(j).join();
+                }
+                long totalTime = System.currentTimeMillis() - startTime;
 
-            System.out.println(totalTime);
+                System.out.println("size: " + i*200 + " totalTime: " + totalTime);
 //            for (int i=1; i<10; i++){
 //                System.out.println(piCalculator.resultTable.results.get(i));
 //            }
 
 
-        }catch (Exception e){
-            System.out.println(e);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
     }
 }
 
 class TaskQueue{
-    LinkedList<Integer> linkedList;
-    TaskQueue(){
+    public Semaphore lock = new Semaphore(1);
+    volatile LinkedList<Integer> linkedList;
+    int size;
+    TaskQueue(int size){
+        this.size = size;
         this.linkedList = getShuffledLL();
     }
     LinkedList<Integer> getShuffledLL(){
         LinkedList<Integer> linkedList = new LinkedList<>();
-        for (int i=1; i<400; i++){
+        for (int i=1; i<size; i++){
             linkedList.push(i);
         }
         Collections.shuffle(linkedList);
         return linkedList;
     }
 
-    synchronized int getTask(){
-        return this.linkedList.pop();
+    int getTask() throws InterruptedException {
+        this.lock.acquire();
+        int task = this.linkedList.pop();
+        this.lock.release();
+        return task;
     }
 
 
 }
 
 class ResultTable{
-    HashMap<Integer, String> results = new HashMap<>();
-    synchronized void putKeyVal(int key, String value){
+    public Semaphore lock = new Semaphore(1);
+    volatile HashMap<Integer, String> results = new HashMap<>();
+    void putKeyVal(int key, String value) throws InterruptedException {
+        this.lock.acquire();
         this.results.put(key, value);
+        this.lock.release();
     }
 }
 
@@ -75,24 +90,20 @@ class WorkerThread implements Runnable{
     @Override
     public void run(){
             while(!this.taskQueue.linkedList.isEmpty()) {
-//                Integer key = this.taskQueue.linkedList.pop();
-//                int key = getTask();
-                int key = this.taskQueue.getTask();
+                int key = 0;
+                try {
+                    key = this.taskQueue.getTask();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Integer value = this.bpp.getDecimal(key);
                 String valStr = String.valueOf(value).substring(0,1);
-                System.out.print(".");
-                this.resultTable.putKeyVal(key, valStr);
-//                putIntoTable(key, valStr);
-//                this.resultTable.results.put(key, valStr);
+                try {
+                    this.resultTable.putKeyVal(key, valStr);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
         }
-
-
-
     }
-    synchronized int getTask(){
-        return this.taskQueue.linkedList.pop();
-    }
-    synchronized void putIntoTable(int key, String value){
-        this.resultTable.results.put(key, value);
-    }
+
 }
