@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b66ab97e-b682-4076-9286-cc157eb23c68" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Assignment4/PI.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Assignment4/PI.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Assignment4/ResultTable.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Assignment4/ResultTable.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Assignment4/TaskQueue.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Assignment4/TaskQueue.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Assignment4/WorkerThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Assignment4/WorkerThread.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PI.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,7 +28,7 @@
   <component name="ProjectId" id="1YwmdpIdh9jLgiPL0EPWIfOlje5" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../RaceCondition" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../OSAssn3CommandLine" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
